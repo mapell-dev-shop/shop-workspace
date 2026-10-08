@@ -1,0 +1,9 @@
+# The service repos are cloned here but versioned on their own.
+/contracts/
+/orders-service/
+/inventory-service/
+/payments-service/
+/.run/
+/.venv/
+__pycache__/
+.pytest_cache/

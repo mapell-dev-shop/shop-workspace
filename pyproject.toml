@@ -1,0 +1,12 @@
+[project]
+name = "shop-workspace"
+version = "0.1.0"
+description = "Ties the shop services together: Kafka, scripts and end to end tests."
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8.3", "httpx2>=2.13"]
+
+[tool.uv]
+package = false
