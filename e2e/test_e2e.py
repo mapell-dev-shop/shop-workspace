@@ -1,6 +1,6 @@
 """The whole order flow through Kafka. Needs ./up.sh and ./run-all.sh first.
 
-run-all.sh resets the demo stock, so run it again before repeating these tests many times.
+Each run uses one PEN-1 from stock. ./stop-all.sh && ./run-all.sh resets the stock.
 """
 
 import time
@@ -11,6 +11,7 @@ import httpx2
 import pytest
 
 ORDERS = "http://localhost:8001"
+INVENTORY = "http://localhost:8002"
 PAYMENTS = "http://localhost:8003"
 
 
@@ -45,6 +46,11 @@ def payment(order_id: str) -> dict[str, Any] | None:
     return response.json() if response.status_code == 200 else None
 
 
+def stock(sku: str) -> int:
+    level: int = httpx2.get(f"{INVENTORY}/products/{sku}").json()["stock"]
+    return level
+
+
 def order(order_id: str) -> dict[str, Any]:
     body: dict[str, Any] = httpx2.get(f"{ORDERS}/orders/{order_id}").json()
     return body
@@ -74,3 +80,12 @@ def test_an_order_over_the_payment_limit_is_rejected() -> None:
 
     assert final["status"] == "REJECTED"
     assert final["status_reason"] == "payment failed: amount over limit"
+
+
+def test_a_failed_payment_gives_the_stock_back() -> None:
+    before = stock("LAPTOP-1")
+    order_id = place_order("LAPTOP-1", 1)
+
+    wait_for(lambda: order(order_id), lambda o: o["status"] == "REJECTED")
+
+    assert wait_for(lambda: stock("LAPTOP-1"), lambda level: level == before) == before

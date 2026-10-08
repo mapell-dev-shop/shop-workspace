@@ -80,6 +80,35 @@ def test_uncommitted_work_is_kept_unless_discard_is_given(workspace: Path) -> No
     assert (workspace / "orders-service" / "first").read_text() == "first"
 
 
+def test_an_untracked_file_blocks_the_checkout(workspace: Path) -> None:
+    (workspace / "contracts" / "notes.md").write_text("mine")
+
+    result = run(workspace, "01")
+
+    assert result.returncode == 1
+    assert branches(workspace) == ["main"] * 5
+    assert (workspace / "contracts" / "notes.md").read_text() == "mine"
+
+
+def test_rerunning_a_lesson_keeps_work_committed_on_its_branch(workspace: Path) -> None:
+    orders = workspace / "orders-service"
+    assert run(workspace, "01").returncode == 0
+    commit(orders, "my-work")
+    my_work = git(orders, "rev-parse", "HEAD")
+
+    refused = run(workspace, "01")
+
+    assert refused.returncode == 1
+    assert "orders-service: branch lesson-01 has commits after lesson-01-start" in refused.stderr
+    assert git(orders, "rev-parse", "lesson-01") == my_work
+
+    discarded = run(workspace, "01", "--discard")
+
+    assert discarded.returncode == 0, discarded.stderr
+    assert my_work[:7] in discarded.stdout
+    assert git(orders, "rev-parse", "HEAD") == git(orders, "rev-parse", "lesson-01-start")
+
+
 @pytest.mark.parametrize("args", [[], ["1"], ["01", "--force"], ["01", "--discard", "x"]])
 def test_bad_arguments_print_usage(workspace: Path, args: list[str]) -> None:
     result = run(workspace, *args)

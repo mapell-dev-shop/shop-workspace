@@ -10,3 +10,7 @@ dev = ["pytest>=8.3", "httpx2>=2.13"]
 
 [tool.uv]
 package = false
+
+[tool.pytest.ini_options]
+# The end-to-end tests live in e2e/ and need the running shop: uv run pytest e2e
+testpaths = ["tests"]

@@ -11,7 +11,7 @@ Clone this repository, then from its directory:
     SHOP_GIT_BASE=<address shared by the shop repositories> ./setup.sh
     ./up.sh
     ./run-all.sh
-    uv run pytest tests/test_e2e.py
+    uv run pytest e2e
 
 `SHOP_GIT_BASE` is the address of the service repositories without the repository name. `setup.sh` clones `contracts`, `orders-service`, `inventory-service` and `payments-service` into this directory.
 
