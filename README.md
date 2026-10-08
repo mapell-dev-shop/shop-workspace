@@ -6,14 +6,14 @@ You need git, [uv](https://docs.astral.sh/uv/) and Docker.
 
 ## Set up
 
-Clone this repository, then from its directory:
-
-    SHOP_GIT_BASE=<address shared by the shop repositories> ./setup.sh
+    git clone https://github.com/mapell-dev-shop/shop-workspace.git
+    cd shop-workspace
+    ./setup.sh
     ./up.sh
     ./run-all.sh
     uv run pytest e2e
 
-`SHOP_GIT_BASE` is the address of the service repositories without the repository name. `setup.sh` clones `contracts`, `orders-service`, `inventory-service` and `payments-service` into this directory.
+`setup.sh` clones `contracts`, `orders-service`, `inventory-service` and `payments-service` from github.com/mapell-dev-shop into this directory. To work on your own forks, set `SHOP_GIT_BASE` to your account's address, for example `SHOP_GIT_BASE=https://github.com/your-account ./setup.sh`.
 
 Stop everything with `./stop-all.sh` and `docker compose down`.
 

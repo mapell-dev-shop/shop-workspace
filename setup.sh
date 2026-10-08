@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Clones the four service repos into this workspace and installs their dependencies.
-# Usage: SHOP_GIT_BASE=<git URL prefix of the shop repos> ./setup.sh
+# They come from github.com/mapell-dev-shop; set SHOP_GIT_BASE to clone your forks instead.
 set -euo pipefail
 cd "$(dirname "$0")"
-: "${SHOP_GIT_BASE:?set SHOP_GIT_BASE to the git URL prefix of the shop repos}"
+SHOP_GIT_BASE=${SHOP_GIT_BASE:-https://github.com/mapell-dev-shop}
 for repo in contracts orders-service inventory-service payments-service; do
   [[ -d "$repo/.git" ]] || git clone -q "$SHOP_GIT_BASE/$repo.git" "$repo"
   uv sync -q --directory "$repo"
