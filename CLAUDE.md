@@ -28,5 +28,5 @@ orders-service also calls inventory-service over HTTP (`GET /products/{sku}`) fo
 * `./up.sh` starts Kafka in Docker and creates the topics. `docker compose down` stops it.
 * `./run-all.sh` starts every API and worker, and refuses if the shop is already running. `./stop-all.sh` stops them. Logs are in `.run/`.
 * `uv run pytest e2e` runs the whole flow. It needs the two commands above. `uv run pytest` alone tests the scripts.
-* `./checkout-lesson.sh NN` puts every repository at the start of lesson NN.
+* `./checkout-lesson.sh NN` puts every repository at the start of lesson NN, and `--end` at its end. It deletes the services' SQLite databases; `./run-all.sh` creates them again.
 * Inside a service: `uv run pytest`, `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy src`.

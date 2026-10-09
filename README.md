@@ -21,6 +21,8 @@ Stop everything with `./stop-all.sh` and `docker compose down`.
 
     ./checkout-lesson.sh 03
 
-puts every repository on a branch `lesson-03` that starts where lesson 3 starts. It refuses if you have uncommitted changes. `./checkout-lesson.sh 03 --discard` throws them away instead.
+puts every repository on a branch `lesson-03` that starts where lesson 3 starts. It refuses if you have uncommitted changes. `./checkout-lesson.sh 03 --discard` throws them away instead. `./checkout-lesson.sh 03 --end` goes to where lesson 3 ends, for when you want to skip ahead or a demo went wrong.
+
+Every checkout also deletes the services' SQLite databases: an earlier lesson's code cannot open a database that a later lesson migrated. `./run-all.sh` creates them again.
 
 What runs where is in `CLAUDE.md`.

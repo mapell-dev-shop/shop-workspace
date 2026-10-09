@@ -7,3 +7,8 @@
 /.venv/
 __pycache__/
 .pytest_cache/
+# Worktrees made next to a service, where ../contracts still resolves (lesson 07).
+/contracts-*/
+/orders-service-*/
+/inventory-service-*/
+/payments-service-*/
