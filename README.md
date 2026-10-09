@@ -25,4 +25,14 @@ puts every repository on a branch `lesson-03` that starts where lesson 3 starts.
 
 Every checkout also deletes the services' SQLite databases: an earlier lesson's code cannot open a database that a later lesson migrated. `./run-all.sh` creates them again.
 
+## Claude Code plugin
+
+`plugins/shop-team` holds the team's shared Claude Code setup: the `new-consumer` skill, the `reviewer` agent, and hooks that run ruff format on every edited Python file, mypy when Claude stops, and block destructive commands. This repository is its marketplace (`.claude-plugin/marketplace.json`). Install it with
+
+    /plugin install shop-team --marketplace mapell-dev-shop/shop-workspace
+
+or, from a local clone, `/plugin marketplace add ./` and then `/plugin install shop-team@shop-workspace`.
+
+The hooks work in a session started here or in any service. A file is formatted with the ruff of the repository it belongs to, and mypy checks the session's repository plus, from here, every service with uncommitted changes under `src`. A repository without ruff, mypy or `src` is skipped.
+
 What runs where is in `CLAUDE.md`.

@@ -1,0 +1,9 @@
+{
+  "name": "shop-team",
+  "version": "0.1.0",
+  "description": "Shared Claude Code setup for the shop services: the new-consumer skill, the reviewer agent, and hooks that run ruff format on edits, mypy on stop and block destructive commands.",
+  "author": {
+    "name": "mszupke"
+  },
+  "license": "MIT"
+}

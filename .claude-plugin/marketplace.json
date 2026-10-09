@@ -1,0 +1,16 @@
+{
+  "name": "shop-workspace",
+  "owner": {
+    "name": "mszupke"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for the shop services."
+  },
+  "plugins": [
+    {
+      "name": "shop-team",
+      "source": "./plugins/shop-team",
+      "description": "The new-consumer skill, the reviewer agent, and ruff, mypy and dangerous-command hooks for the shop services."
+    }
+  ]
+}
