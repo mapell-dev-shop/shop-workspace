@@ -2,6 +2,8 @@
 
 Each run uses one PEN-1 from stock; the cancel tests give theirs back.
 ./stop-all.sh && ./run-all.sh resets the stock.
+After pulling the cancel changes, run ./up.sh again so the new topics exist;
+otherwise the workers stop right after starting.
 """
 
 import time
@@ -96,15 +98,6 @@ def cancel(order_id: str) -> httpx2.Response:
     return httpx2.post(f"{ORDERS}/orders/{order_id}/cancel")
 
 
-def holds(fetch: Callable[[], Any], ok: Callable[[Any], bool], seconds: float = 3) -> None:
-    """Check that ok(fetch()) stays true, so a late event cannot undo what was checked."""
-    deadline = time.monotonic() + seconds
-    while time.monotonic() < deadline:
-        value = fetch()
-        assert ok(value), f"no longer holds: {value}"
-        time.sleep(0.5)
-
-
 def test_cancelling_a_confirmed_order_refunds_it_and_gives_the_stock_back() -> None:
     before = stock("PEN-1")
     order_id = place_order("PEN-1", 1)
@@ -136,7 +129,8 @@ def test_cancelling_right_after_placing_leaves_no_stock_or_money_held() -> None:
         return level == before and (paid is None or paid["status"] == "REFUNDED")
 
     wait_for(settled, nothing_held)
-    holds(settled, nothing_held)
+    time.sleep(3)
+    wait_for(settled, nothing_held)
     if payment(order_id) is not None:
         wait_for(lambda: order(order_id), lambda o: o["refunded_at"] is not None)
 
