@@ -6,9 +6,9 @@ A small shop split into services. Each service is its own git repository, cloned
 
 | Directory | Owns | HTTP | Consumes | Publishes |
 | --- | --- | --- | --- | --- |
-| orders-service | orders and their status | :8001 | StockRejected, PaymentFailed, PaymentCaptured | OrderPlaced |
-| inventory-service | products, stock, reservations | :8002 | OrderPlaced, PaymentFailed | StockReserved, StockRejected |
-| payments-service | payments, through a fake gateway | :8003 | StockReserved | PaymentCaptured, PaymentFailed |
+| orders-service | orders and their status | :8001 | StockRejected, PaymentFailed, PaymentCaptured, PaymentRefunded | OrderPlaced, OrderCancelled |
+| inventory-service | products, stock, reservations | :8002 | OrderPlaced, PaymentFailed, OrderCancelled | StockReserved, StockRejected |
+| payments-service | payments, through a fake gateway | :8003 | StockReserved, OrderCancelled | PaymentCaptured, PaymentFailed, PaymentRefunded |
 | contracts | event schemas and Kafka helpers (package `shop_contracts`) | | | |
 
 orders-service also calls inventory-service over HTTP (`GET /products/{sku}`) for prices.
@@ -16,6 +16,8 @@ orders-service also calls inventory-service over HTTP (`GET /products/{sku}`) fo
 ## Order flow
 
 `POST /orders` publishes OrderPlaced. Inventory reserves the stock and publishes StockReserved. Payments captures the money and publishes PaymentCaptured, and orders-service marks the order CONFIRMED. If a step fails, inventory publishes StockRejected or payments publishes PaymentFailed, and orders-service marks the order REJECTED. When the payment fails, inventory also gives the reserved stock back.
+
+Cancelling a PENDING or CONFIRMED order publishes OrderCancelled. Inventory gives the stock back and payments refunds a captured payment, publishing PaymentRefunded. orders-service records `refunded_at`. Each service remembers cancelled orders, so a late OrderPlaced or StockReserved does nothing.
 
 ## Rules
 
